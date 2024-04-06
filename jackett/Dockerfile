@@ -13,7 +13,12 @@ ENV XDG_DATA_HOME="/data" \
 RUN apt-get update && apt-get install -y \
     coreutils \
     nginx \
-    openvpn
+    openvpn \
+    net-tools \
+    ipcalc \
+    iptables \
+    kmod \
+    moreutils
 
 # Make folders
 RUN \

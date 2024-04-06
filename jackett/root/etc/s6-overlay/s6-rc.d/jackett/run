@@ -7,7 +7,7 @@ bashio::log.info "Starting Jackett..."
 if bashio::config.true 'openvpn_enabled'; then
     # exec /usr/sbin/openvpn --pull-filter ignore route-ipv6 --pull-filter ignore ifconfig-ipv6 --config /etc/openvpn/config.ovpn --script-security 2 --up /etc/openvpn/up-jackett.sh
     exec /usr/sbin/openvpn --pull-filter ignore route-ipv6 --pull-filter ignore ifconfig-ipv6 --config /etc/openvpn/config.ovpn --script-security 2 
-    exec s6-setuidgid abc /etc/openvpn/iptables.sh
+    exec /bin/bash /etc/openvpn/iptables.sh
 else
     #exec s6-setuidgid jackett mono /app/Jackett/JackettConsole.exe
     exec s6-setuidgid abc /app/Jackett/jackett --NoUpdates
