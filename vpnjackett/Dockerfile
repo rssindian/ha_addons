@@ -49,7 +49,6 @@ RUN apt update \
     iptables \
     jq \
     kmod \
-    libicu67 \
     moreutils \
     net-tools \
     openresolv \
