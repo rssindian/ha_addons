@@ -6,7 +6,7 @@ My first attempt towards creating HA Addons
 
 This repository contains the following add-ons
 
-### [Jackett Server with OpenVPN](./jackett)
+### [Jackett Server with OpenVPN](./vpnjackett)
 
 ![Supports aarch64 Architecture][aarch64-shield]
 ![Supports amd64 Architecture][amd64-shield]

@@ -74,4 +74,4 @@ This is used to disable the OpenVPN and run Jackett directly.
 
 ## Changelog & Releases
 
-The versioning of this add-on is changed based on the upstream Jackett software. 
+This addon will be updated whenever there is an update upstream Jackett software. 
