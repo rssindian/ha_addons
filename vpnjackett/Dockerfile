@@ -55,12 +55,12 @@ RUN apt update \
 
 # Download libicu67package
 RUN \
-  if [ $BUILD_ARCH = "armv7" ]; then \
-    curl -o /tmp/libicu67.deb http://http.us.debian.org/debian/pool/main/i/icu/libicu67_67.1-7_armhf.deb; \
-  elif [ $BUILD_ARCH = "aarch64" ]; then \
-    curl -o /tmp/libicu67.deb http://http.us.debian.org/debian/pool/main/i/icu/libicu67_67.1-7_arm64.deb; \
+  if [[ "$BUILD_ARCH" = "armv7" ]]; then \
+    curl -o /tmp/libicu67.deb -L http://http.us.debian.org/debian/pool/main/i/icu/libicu67_67.1-7_armhf.deb; \
+  elif [[ "$BUILD_ARCH" = "aarch64" ]]; then \
+    curl -o /tmp/libicu67.deb -L http://http.us.debian.org/debian/pool/main/i/icu/libicu67_67.1-7_arm64.deb; \
   else \
-    curl -o /tmp/libicu67.deb http://http.us.debian.org/debian/pool/main/i/icu/libicu67_67.1-7_amd64.deb; \
+    curl -o /tmp/libicu67.deb -L http://http.us.debian.org/debian/pool/main/i/icu/libicu67_67.1-7_amd64.deb; \
   fi 
 
 # Install the libicu67
@@ -76,12 +76,12 @@ RUN sed -i.bak '/deb http:\/\/deb.debian.org\/debian\/ bookworm main contrib non
 
 # Pull jackett binary
 RUN \
-  if [ -z ${JACKETT_RELEASE+x} ]; then \
+  if [[ -z ${JACKETT_RELEASE+x} ]]; then \
 	JACKETT_RELEASE=$(curl -sX GET "https://api.github.com/repos/Jackett/Jackett/releases/latest" | jq -r .tag_name); \
   fi && \ 
-  if [ $BUILD_ARCH = "armv7" ]; then \
+  if [[ "$BUILD_ARCH" = "armv7" ]]; then \
     curl -o /opt/jacket.tar.gz -L https://github.com/Jackett/Jackett/releases/download/${JACKETT_RELEASE}/Jackett.Binaries.LinuxARM32.tar.gz; \
-  elif [ $BUILD_ARCH = "aarch64" ]; then \
+  elif [[ "$BUILD_ARCH" = "aarch64" ]]; then \
     curl -o /opt/jacket.tar.gz -L https://github.com/Jackett/Jackett/releases/download/${JACKETT_RELEASE}/Jackett.Binaries.LinuxARM64.tar.gz; \
   else \
     curl -o /opt/jacket.tar.gz -L https://github.com/Jackett/Jackett/releases/download/${JACKETT_RELEASE}/Jackett.Binaries.LinuxAMDx64.tar.gz; \
