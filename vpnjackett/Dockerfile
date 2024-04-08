@@ -28,8 +28,6 @@ LABEL \
     org.label-schema.vendor="No Vendor"
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV XDG_DATA_HOME="/config" \
-    XDG_CONFIG_HOME="/config"
 
 VOLUME /config
 
@@ -40,7 +38,7 @@ WORKDIR /opt
 # Install dependencies some of the scripts in the container rely on.
 RUN apt update \
     && apt upgrade -y \
-    && apt install -y  --no-install-recommends \
+    && apt install -y --no-install-recommends \
     curl \
     ca-certificates \
     dos2unix \
@@ -53,19 +51,33 @@ RUN apt update \
     net-tools \
     openresolv \
     openvpn \
-    procps \
-    && apt-get clean \
-    && apt autoremove -y \
-    && rm -rf \
-    /var/lib/apt/lists/* \
-    /tmp/* \
-    /var/tmp/*
+    procps
+
+# Download libicu67package
+RUN \
+  if [ $BUILD_ARCH = "armv7" ]; then \
+    curl -o /tmp/libicu67.deb http://http.us.debian.org/debian/pool/main/i/icu/libicu67_67.1-7_armhf.deb; \
+  elif [ $BUILD_ARCH = "aarch64" ]; then \
+    curl -o /tmp/libicu67.deb http://http.us.debian.org/debian/pool/main/i/icu/libicu67_67.1-7_arm64.deb; \
+  else \
+    curl -o /tmp/libicu67.deb http://http.us.debian.org/debian/pool/main/i/icu/libicu67_67.1-7_amd64.deb; \
+  fi 
+
+# Install the libicu67
+RUN dpkg -i /tmp/libicu67.deb
+
+RUN echo "deb http://deb.debian.org/debian/ bookworm main contrib non-free" >> /etc/apt/sources.list \
+    && apt update \
+    && apt install -y --no-install-recommends iproute2
+  
+# Clean up
+RUN sed -i.bak '/deb http:\/\/deb.debian.org\/debian\/ bookworm main contrib non-free/d' /etc/apt/sources.list \
+     && apt update
 
 # Pull jackett binary
 RUN \
   if [ -z ${JACKETT_RELEASE+x} ]; then \
-	JACKETT_RELEASE=$(curl -sX GET "https://api.github.com/repos/Jackett/Jackett/releases/latest" \
-	| jq -r .tag_name); \
+	JACKETT_RELEASE=$(curl -sX GET "https://api.github.com/repos/Jackett/Jackett/releases/latest" | jq -r .tag_name); \
   fi && \ 
   if [ $BUILD_ARCH = "armv7" ]; then \
     curl -o /opt/jacket.tar.gz -L https://github.com/Jackett/Jackett/releases/download/${JACKETT_RELEASE}/Jackett.Binaries.LinuxARM32.tar.gz; \
@@ -79,10 +91,19 @@ RUN \
 RUN tar -xzf /opt/jacket.tar.gz -C /opt 
 
 # cleanup
-RUN rm -rf /opt/jacket.tar.gz \
-    && apt purge -y
+RUN rm -rf /tmp/libicu67.deb \
+    && rm -rf /opt/jacket.tar.gz \
+    && apt clean \
+    && apt autoremove -y \
+    && apt purge -y \
+    && rm -rf \
+    /var/lib/apt/lists/* \
+    /tmp/* \
+    /var/tmp/*
 
-ENV APP_NAME=vpnjackett
+ENV APP_NAME="vpnjackett"
+ENV XDG_DATA_HOME="/config/${APP_NAME}" \
+    XDG_CONFIG_HOME="/config/${APP_NAME}"
 
 # Make directories
 RUN mkdir -p /etc/jackett \
@@ -96,5 +117,4 @@ ADD jackett/ /etc/jackett/
 RUN chmod +x /etc/jackett/*.sh /etc/jackett/*.init /etc/openvpn/*.sh /opt/Jackett/jackett
 
 EXPOSE 9117
-CMD ["/bin/bash", "/etc/openvpn/start.sh"]
-
+CMD ["/etc/openvpn/init.sh"]

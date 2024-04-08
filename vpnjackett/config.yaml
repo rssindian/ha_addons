@@ -1,5 +1,5 @@
 name: VPN Jackett
-version: dev
+version: dev5
 slug: vpnjackett
 description: Jackett via OpenVPN for Home Assistant
 url: https://github.com/rssindian/ha_addons/vpnjackett
@@ -13,43 +13,39 @@ map:
   - config:rw
 ports:
   9117/tcp: 9117
+  9117/udp: 9117
 ports_description:
   9117/tcp: Web UI port
-privileged:
-  - NET_ADMIN
+  9117/udp: Web UI port
+privileged: 
+    - NET_ADMIN
 devices:
   - /dev/net/tun
 hassio_api: true
 
 options:
-  VPN_ENABLED: false
-  VPN_FILENAME:
-  VPN_USERNAME:
-  VPN_PASSWORD:
-  WEBUI_PASSWORD:
-  LAN_NETWORK: 192.168.1.0/24
-  NAME_SERVERS: 1.1.1.1, 8.8.8.8
-  LEGACY_IPTABLES: false
-  HEALTH_CHECK_HOST: one.one.one.one
+  DEBUG_ENABLED: false
+  VPN_FILENAME: ""
+  VPN_USERNAME: ""
+  VPN_PASSWORD: ""
+  LAN_NETWORK: "192.168.1.0/24"
+  NAME_SERVERS: "1.1.1.1,8.8.8.8,1.0.0.1,8.8.4.4"
+  HEALTH_CHECK_HOST: "one.one.one.one"
   HEALTH_CHECK_INTERVAL: 300
 
 schema:
-  log_level: match(^(trace|debug|info|notice|warning|error|fatal)$)
-  VPN_ENABLED: bool
-  VPN_FILENAME: str
-  VPN_USERNAME: str
-  VPN_PASSWORD: password
-  WEBUI_PASSWORD: password
-  LAN_NETWORK: str
-  NAME_SERVERS: str
-  LEGACY_IPTABLES: bool
-  HEALTH_CHECK_HOST: str
-  HEALTH_CHECK_INTERVAL: int(300,600)
-
-environment:
-  LOG_FORMAT: "{LEVEL}: {MESSAGE}"
+  DEBUG_ENABLED: "bool"
+  VPN_FILENAME: "str"
+  VPN_USERNAME: "str"
+  VPN_PASSWORD: "password"
+  LAN_NETWORK: "str?"
+  NAME_SERVERS: "str?"
+  HEALTH_CHECK_HOST: "str?"
+  HEALTH_CHECK_INTERVAL: "int(300,600)?"
+  WEBUI_PASSWORD: "password?"
+  LEGACY_IPTABLES: "bool?"
+  DISABLE_VPN: "bool?"
 
 panel_icon: mdi:coat-rack
-backup_exclude: ["*.txt"]
 init: false
 image: ghcr.io/rssindian/vpnjackett-{arch}

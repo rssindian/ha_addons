@@ -1,5 +1,5 @@
 # Rss's HA Addons
-My dirst attempt towards creating HA Addons
+My first attempt towards creating HA Addons
 
 
 ## Add-ons

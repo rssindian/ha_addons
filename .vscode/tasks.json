@@ -14,6 +14,22 @@
         "panel": "new"
       },
       "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "label": "Copy to HA Addon Local",
+      "command": "cp",
+      "args": [
+          "-recurse",
+          "-force",
+          "${workspaceFolder}/vpnjackett/",
+          "Z:/vpnjackett/"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
     }
   ]
 }

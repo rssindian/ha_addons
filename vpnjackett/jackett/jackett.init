@@ -25,7 +25,7 @@ SCRIPTNAME="/etc/init.d/jackett"
 NAME="jackett"
 DESC="jackett"
 PIDFILE="/var/run/$NAME.pid"
-JACKETTLOGPATH="${JACKET_CONFIG_FOLDER}/Logs/"
+JACKETTLOGPATH="${JKT_FLDR}/"
 JACKETTLOG="log.txt"
 
 DAEMON="/opt/Jackett/jackett"
@@ -55,7 +55,7 @@ do_start()
 	# Check if log path exists. If it doesn't exist, create it.
 	if [ ! -e $JACKETTLOGPATH ]; then
 		mkdir -p $JACKETTLOGPATH
-		chown -R ${PUID}:${PGID} ${JACKET_FOLDER}
+		chown -R ${PUID}:${PGID} ${JKT_FLDR}
 	fi
 	
 	# Check for log file. If it doesn't exist, create it.

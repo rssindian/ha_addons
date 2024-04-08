@@ -1,6 +1,6 @@
-# Jackett addon for Hass.io
+# VPN Jackett addon for Home Assistant
 
-The torrent proxy for Hass.io with OpenVPN support.
+Home Assistant Addon for Jackett tunneling via OpenVPN
 
 ## Installation
 
@@ -8,67 +8,70 @@ The installation of this add-on is pretty straightforward and not different in
 comparison to installing any other Hass.io add-on.
 
 1. Add https://github.com/rssindian/ha_addons to your Hass.io instance as a repository.
-1. Install the "Jackett" add-on.
-1. Start the "Jackett" add-on.
-1. Check the logs of the "Jackett" to see if everything went well.
-1. Open the web-ui
+2. Install the "Jackett" add-on.
+3. Start the "Jackett" add-on.
+4. Check the logs of the "Jackett" to see if everything went well.
+5. Open the web-ui
+6. Additional Jackett logs can be found at homeassistant config/vpnjackett/Jackett/logs.txt
+
 
 ## Configuration
 
-**Note**: _Remember to restart the add-on when the configuration is changed._
-
 Jackett add-on configuration:
 
-```json
-{
-  "local_network": "192.168.1.0/24",
-  "log_level": "info",
-  "openvpn_enabled": false,
-  "openvpn_config": "",
-  "openvpn_username": "",
-  "openvpn_password": ""
-}
-```
+### Option: `DEBUG_ENABLED`
 
-### Option: `log_level`
+This enables additional debug logs. 
+Note: The logging in this addon displays all info and warning by default
 
-The `log_level` option controls the level of log output by the addon and can
-be changed to be more or less verbose, which might be useful when you are
-dealing with an unknown issue. Possible values are:
+### Option: VPN_FILENAME
 
-- `trace`: Show every detail, like all called internal functions.
-- `debug`: Shows detailed debug information.
-- `info`: Normal (usually) interesting events.
-- `warning`: Exceptional occurrences that are not errors.
-- `error`:  Runtime errors that do not require immediate action.
-- `fatal`: Something went terribly wrong. Add-on becomes unusable.
+This is required to specify the <file_name> prefix of the .ovpn file. 
+You need to copy the OpenVPN <file_name>.ovpn file from your VPN provider to homeassistant config folder under vpnjackett/openvpn
 
-Please note that each level automatically includes log messages from a
-more severe level, e.g., `debug` also shows `info` messages. By default,
-the `log_level` is set to `info`, which is the recommended setting unless
-you are troubleshooting.
+### Option: `VPN_USERNAME`
 
-### Option: local_network
+Your OpenVPN username.
+
+### Option: `VPN_PASSWORD`
+
+Your OpenVPN password.
+
+### Option: `LAN_NETWORK`
 
 This specifies the local LAN IP/Subnet scheme. This is to allow local LAN access when the VPN is enabled. 
 Most routers default to 192.168.1.0/24. If you don't know what yours is then leave it default.
 
-### Option: `openvpn_enabled`
+### Option: `NAME_SERVERS`
 
-Enable OpenVPN to anonymize your torrent activity.
+Specify the DNS servers you would like this addons to use
 
-### Option: `openvpn_config`
+### Option: `HEALTH_CHECK_HOST`
 
-The name of .ovpn file WITHOUT the .ovpn extenstion (e.g. myFile.ovpn will be entered as myFile). Must be put it in `/config/openvpn`.
+Specify the Web URL to hit and confirm if the connectivity works after VPN is enabled.
 
-### Option: `openvpn_username`
+### Option: `HEALTH_CHECK_INTERVAL`
 
-Your OpenVPN username.
+Specify how often the addon should try to hit the url specified above to confirm connectivity.
 
-### Option: `openvpn_password`
 
-Your OpenVPN password.
+### Optional Configurations:
+
+### Option: `WEBUI_PASSWORD`
+
+You can specify a password to be used for the Jacket Web UI. This will always overwrite the password set within the Jackett UI. 
+If you want to use the password set via Web UI, then leave this empty
+
+### Option: `LEGACY_IPTABLES`
+
+Enable this option if you want this addon to use Legacy iptables.
+
+### Option: `DISABLE_VPN`
+
+This is used to disable the OpenVPN and run Jackett directly.
+
+
 
 ## Changelog & Releases
 
-The versioning of this add-on is based on the upstream Jackett software. However, the changelog is only releated to the add-on, not the upstream software.
+The versioning of this add-on is changed based on the upstream Jackett software. 

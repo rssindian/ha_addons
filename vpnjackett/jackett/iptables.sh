@@ -14,13 +14,13 @@ done
 # identify docker bridge interface name (probably eth0)
 docker_interface=$(netstat -ie | grep -vE "lo|tun|tap|wg" | sed -n '1!p' | grep -P -o -m 1 '^[\w]+')
 if [[ "${DEBUG}" == "true" ]]; then
-	bashio::log.debug "Docker interface defined as ${docker_interface}" | ts '%Y-%m-%d %H:%M:%.S'
+	echo "[DEBUG] Docker interface defined as ${docker_interface}" | ts '%Y-%m-%d %H:%M:%.S'
 fi
 
 # identify ip for docker bridge interface
 docker_ip=$(ifconfig "${docker_interface}" | grep -o "inet [0-9]*\.[0-9]*\.[0-9]*\.[0-9]*" | grep -o "[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*")
 if [[ "${DEBUG}" == "true" ]]; then
-	bashio::log.debug "Docker IP defined as ${docker_ip}" | ts '%Y-%m-%d %H:%M:%.S'
+	echo "[DEBUG] Docker IP defined as ${docker_ip}" | ts '%Y-%m-%d %H:%M:%.S'
 fi
 
 #docker_default_range="172.17.0.0/16"
@@ -29,20 +29,21 @@ fi
 #	grepcidr "$docker_default_range" <(echo "$IP") >/dev/null
 #	grepcidr_status=$?
 #	if [ "${grepcidr_status}" -eq 1 ]; then
-#		bashio::log.error "It seems like the IP the container is using outside the default Docker DHCP range" | ts '%Y-%m-%d %H:%M:%.S'
-#		bashio::log.error "Use bridge mode to run this container. Using a custom IP is not supported." | ts '%Y-%m-%d %H:%M:%.S'
-#		bashio::log.error "IP of the container: ${docker_ip}" | ts '%Y-%m-%d %H:%M:%.S'
+#		echo "[ERROR] It seems like the IP the container is using outside the default Docker DHCP range" | ts '%Y-%m-%d %H:%M:%.S'
+#		echo "[ERROR] Use bridge mode to run this container. Using a custom IP is not supported." | ts '%Y-%m-%d %H:%M:%.S'
+#		echo "[ERROR] IP of the container: ${docker_ip}" | ts '%Y-%m-%d %H:%M:%.S'
 #	fi
 #done
 
 # identify netmask for docker bridge interface
 docker_mask=$(ifconfig "${docker_interface}" | grep -o "netmask [0-9]*\.[0-9]*\.[0-9]*\.[0-9]*" | grep -o "[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*")
-bashio::log.debug "Docker netmask defined as ${docker_mask}" | ts '%Y-%m-%d %H:%M:%.S'
-
+if [[ "${DEBUG}" == "true" ]]; then
+	echo "[DEBUG] Docker netmask defined as ${docker_mask}" | ts '%Y-%m-%d %H:%M:%.S'
+fi
 
 # convert netmask into cidr format
 docker_network_cidr=$(ipcalc "${docker_ip}" "${docker_mask}" | grep -P -o -m 1 "(?<=Network:)\s+[^\s]+" | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
-bashio::log.info "Docker network defined as ${docker_network_cidr}" | ts '%Y-%m-%d %H:%M:%.S'
+echo "[INFO] Docker network defined as ${docker_network_cidr}" | ts '%Y-%m-%d %H:%M:%.S'
 
 # ip route
 ###
@@ -58,11 +59,11 @@ for lan_network_item in "${lan_network_list[@]}"; do
 	# strip whitespace from start and end of lan_network_item
 	lan_network_item=$(echo "${lan_network_item}" | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
 
-	bashio::log.info "Adding ${lan_network_item} as route via docker ${docker_interface}"  | ts '%Y-%m-%d %H:%M:%.S'
+	echo "[INFO] Adding ${lan_network_item} as route via docker ${docker_interface}"  | ts '%Y-%m-%d %H:%M:%.S'
 	ip route add "${lan_network_item}" via "${DEFAULT_GATEWAY}" dev "${docker_interface}"
 done
 
-bashio::log.info "ip route defined as follows..." | ts '%Y-%m-%d %H:%M:%.S'
+echo "[INFO] ip route defined as follows..." | ts '%Y-%m-%d %H:%M:%.S'
 echo "--------------------"
 ip route
 echo "--------------------"
@@ -70,15 +71,17 @@ echo "--------------------"
 # setup iptables marks to allow routing of defined ports via "${docker_interface}"
 ###
 
-bashio::log.debug "Modules currently loaded for kernel" | ts '%Y-%m-%d %H:%M:%.S'
-lsmod
+if [[ "${DEBUG}" == "true" ]]; then
+	echo "[DEBUG] Modules currently loaded for kernel" | ts '%Y-%m-%d %H:%M:%.S'
+	lsmod
+fi
 
 # check we have iptable_mangle, if so setup fwmark
 lsmod | grep iptable_mangle
 iptable_mangle_exit_code=$?
 
 if [[ $iptable_mangle_exit_code == 0 ]]; then
-	bashio::log.info "iptable_mangle support detected, adding fwmark for tables" | ts '%Y-%m-%d %H:%M:%.S'
+	echo "[INFO] iptable_mangle support detected, adding fwmark for tables" | ts '%Y-%m-%d %H:%M:%.S'
 
 	# setup route for jackett webui using set-mark to route traffic for port 9117 to "${docker_interface}"
 	echo "9117    webui" >> /etc/iproute2/rt_tables
@@ -109,7 +112,6 @@ iptables -A INPUT -i "${docker_interface}" -p tcp --dport 9117 -j ACCEPT
 iptables -A INPUT -i "${docker_interface}" -p tcp --sport 9117 -j ACCEPT
 
 # additional port list for scripts or container linking
-# This can be defined as a config item if we want to allow additional ports configured in IPTables
 if [[ ! -z "${ADDITIONAL_PORTS}" ]]; then
 	# split comma separated string into list from ADDITIONAL_PORTS env variable
 	IFS=',' read -ra additional_port_list <<< "${ADDITIONAL_PORTS}"
@@ -120,7 +122,7 @@ if [[ ! -z "${ADDITIONAL_PORTS}" ]]; then
 		# strip whitespace from start and end of additional_port_item
 		additional_port_item=$(echo "${additional_port_item}" | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
 
-		bashio::log.info "Adding additional incoming port ${additional_port_item} for ${docker_interface}" | ts '%Y-%m-%d %H:%M:%.S'
+		echo "[INFO] Adding additional incoming port ${additional_port_item} for ${docker_interface}" | ts '%Y-%m-%d %H:%M:%.S'
 
 		# accept input to additional port for "${docker_interface}"
 		iptables -A INPUT -i "${docker_interface}" -p tcp --dport "${additional_port_item}" -j ACCEPT
@@ -174,7 +176,7 @@ if [[ ! -z "${ADDITIONAL_PORTS}" ]]; then
 		# strip whitespace from start and end of additional_port_item
 		additional_port_item=$(echo "${additional_port_item}" | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
 
-		bashio::log.info "Adding additional outgoing port ${additional_port_item} for ${docker_interface}" | ts '%Y-%m-%d %H:%M:%.S'
+		echo "[INFO] Adding additional outgoing port ${additional_port_item} for ${docker_interface}" | ts '%Y-%m-%d %H:%M:%.S'
 
 		# accept output to additional port for lan interface
 		iptables -A OUTPUT -o "${docker_interface}" -p tcp --dport "${additional_port_item}" -j ACCEPT
@@ -189,7 +191,7 @@ iptables -A OUTPUT -p icmp --icmp-type echo-request -j ACCEPT
 # accept output from local loopback adapter
 iptables -A OUTPUT -o lo -j ACCEPT
 
-bashio::log.info "iptables defined as follows..." | ts '%Y-%m-%d %H:%M:%.S'
+echo "[INFO] iptables defined as follows..." | ts '%Y-%m-%d %H:%M:%.S'
 echo "--------------------"
 iptables -S
 echo "--------------------"
