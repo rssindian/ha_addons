@@ -9,24 +9,6 @@ ARG BUILD_VERSION
 
 FROM ${BUILD_FROM}
 
-# Labels
-LABEL \
-    io.hass.name="VPN Jackett" \
-    io.hass.description="Jackett via OpenVPN" \
-    io.hass.arch="${BUILD_ARCH}" \
-    io.hass.version="${BUILD_VERSION}" \
-    io.hass.type="addon" \
-    maintainer="Rss" \
-    org.label-schema.description="Jackett via OpenVPN" \
-    org.label-schema.build-date="${BUILD_DATE}" \
-    org.label-schema.name="VPN Jackett" \
-    org.label-schema.schema-version="${BUILD_VERSION}" \
-    org.label-schema.url="https://github.com/rssindian/ha_addons/jackett" \
-    org.label-schema.usage="https://github.com/rssindian/ha_addons/jackett" \
-    org.label-schema.vcs-ref="${BUILD_REF}" \
-    org.label-schema.vcs-url="https://github.com/rssindian/" \
-    org.label-schema.vendor="No Vendor"
-
 ENV DEBIAN_FRONTEND noninteractive
 
 VOLUME /config
