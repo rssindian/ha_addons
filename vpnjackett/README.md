@@ -12,4 +12,4 @@ After the add-on is started proceed to: https://[ip]:[port] and you can change t
 
 
 ## Source 
-[jackett](https://github.com/Jackett/Jackett) and [OpenVPN](https://github.com/OpenVPN)
+[Jackett](https://github.com/Jackett/Jackett) and [OpenVPN](https://github.com/OpenVPN)

@@ -29,6 +29,8 @@ Note: The logging in this addon displays all info and warning by default
 This is required to specify the <file_name> prefix of the .ovpn file. 
 You need to copy the OpenVPN <file_name>.ovpn file from your VPN provider to homeassistant config folder under vpnjackett/openvpn
 
+** Important Note: ovpn file should contain only one remote address/port **
+
 ### Option: `VPN_USERNAME`
 
 Your OpenVPN username.
