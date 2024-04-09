@@ -53,25 +53,15 @@ RUN apt update \
     openvpn \
     procps
 
-# Download libicu67package
-RUN \
-  if [[ "$BUILD_ARCH" = "armv7" ]]; then \
-    curl -o /tmp/libicu67.deb -L http://http.us.debian.org/debian/pool/main/i/icu/libicu67_67.1-7_armhf.deb; \
-  elif [[ "$BUILD_ARCH" = "aarch64" ]]; then \
-    curl -o /tmp/libicu67.deb -L http://http.us.debian.org/debian/pool/main/i/icu/libicu67_67.1-7_arm64.deb; \
-  else \
-    curl -o /tmp/libicu67.deb -L http://http.us.debian.org/debian/pool/main/i/icu/libicu67_67.1-7_amd64.deb; \
-  fi 
-
-# Install the libicu67
-RUN dpkg -i /tmp/libicu67.deb
-
-RUN echo "deb http://deb.debian.org/debian/ bookworm main contrib non-free" >> /etc/apt/sources.list \
+# Add bullseye source for libicu and ip
+RUN echo "deb http://deb.debian.org/debian/ bullseye main contrib non-free" >> /etc/apt/sources.list \
     && apt update \
-    && apt install -y --no-install-recommends iproute2
-  
-# Clean up
-RUN sed -i.bak '/deb http:\/\/deb.debian.org\/debian\/ bookworm main contrib non-free/d' /etc/apt/sources.list \
+    && apt install -y --no-install-recommends \
+    iproute2 \
+    libicu67
+
+# Remove bullseye source
+RUN sed -i.bak '/deb http:\/\/deb.debian.org\/debian\/ bullseye main contrib non-free/d' /etc/apt/sources.list \
      && apt update
 
 # Pull jackett binary
@@ -91,8 +81,7 @@ RUN \
 RUN tar -xzf /opt/jacket.tar.gz -C /opt 
 
 # cleanup
-RUN rm -rf /tmp/libicu67.deb \
-    && rm -rf /opt/jacket.tar.gz \
+ RUN rm -rf /opt/jacket.tar.gz \
     && apt clean \
     && apt autoremove -y \
     && apt purge -y \
