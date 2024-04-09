@@ -59,7 +59,7 @@ for lan_network_item in "${lan_network_list[@]}"; do
 	# strip whitespace from start and end of lan_network_item
 	lan_network_item=$(echo "${lan_network_item}" | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
 
-	echo "[INFO] Adding ${lan_network_item} as route via docker ${docker_interface}"  | ts '%Y-%m-%d %H:%M:%.S'
+	echo "[INFO] Adding specified Lan Network (${lan_network_item}) as route via docker ${docker_interface}"  | ts '%Y-%m-%d %H:%M:%.S'
 	ip route add "${lan_network_item}" via "${DEFAULT_GATEWAY}" dev "${docker_interface}"
 done
 
@@ -71,10 +71,10 @@ echo "--------------------"
 # setup iptables marks to allow routing of defined ports via "${docker_interface}"
 ###
 
-if [[ "${DEBUG}" == "true" ]]; then
-	echo "[DEBUG] Modules currently loaded for kernel" | ts '%Y-%m-%d %H:%M:%.S'
-	lsmod
-fi
+# if [[ "${DEBUG}" == "true" ]]; then
+# 	echo "[DEBUG] Modules currently loaded for kernel" | ts '%Y-%m-%d %H:%M:%.S'
+# 	lsmod
+# fi
 
 # check we have iptable_mangle, if so setup fwmark
 lsmod | grep iptable_mangle
@@ -105,11 +105,25 @@ iptables -A INPUT -i "${VPN_DEVICE_TYPE}" -j ACCEPT
 iptables -A INPUT -s "${docker_network_cidr}" -d "${docker_network_cidr}" -j ACCEPT
 
 # accept input to vpn gateway
-iptables -A INPUT -i "${docker_interface}" -p $VPN_PROTOCOL --sport $VPN_PORT -j ACCEPT
+# Split the comma-separated ports and protocols
+IFS=',' read -r -a ports_protocols <<< "$VPN_PORTS_PROTOCOLS"
+
+# Loop through each port:protocol pair
+for port_protocol in "${ports_protocols[@]}"; do
+	# Remove everything after : including
+	port="${port_protocol%:*}"
+
+	# Remove everything before : including
+	protocol="${port_protocol##*:}"
+
+	echo "[INFO] Adding protocol: $protocol and port: $port to iptables input" | ts '%Y-%m-%d %H:%M:%.S'
+	# Update the iptables command for each pair
+	iptables -A INPUT -i "${docker_interface}" -p $protocol --dport $port -j ACCEPT
+	iptables -A INPUT -i "${docker_interface}" -p $protocol --sport $port -j ACCEPT
+done
 
 # accept input to jackett webui port
 iptables -A INPUT -i "${docker_interface}" -p tcp --dport 9117 -j ACCEPT
-iptables -A INPUT -i "${docker_interface}" -p tcp --sport 9117 -j ACCEPT
 
 # additional port list for scripts or container linking
 if [[ ! -z "${ADDITIONAL_PORTS}" ]]; then
@@ -152,7 +166,22 @@ iptables -A OUTPUT -o "${VPN_DEVICE_TYPE}" -j ACCEPT
 iptables -A OUTPUT -s "${docker_network_cidr}" -d "${docker_network_cidr}" -j ACCEPT
 
 # accept output from vpn gateway
-iptables -A OUTPUT -o "${docker_interface}" -p $VPN_PROTOCOL --dport $VPN_PORT -j ACCEPT
+# Split the comma-separated ports and protocols
+IFS=',' read -r -a ports_protocols <<< "$VPN_PORTS_PROTOCOLS"
+
+# Loop through each port:protocol pair
+for port_protocol in "${ports_protocols[@]}"; do
+	# Remove everything after : including
+	port="${port_protocol%:*}"
+
+	# Remove everything before : including
+	protocol="${port_protocol##*:}"
+
+	echo "[INFO] Adding protocol: $protocol and port: $port to iptables output" | ts '%Y-%m-%d %H:%M:%.S'
+	# Update the iptables command for each pair
+	iptables -A OUTPUT -o "${docker_interface}" -p "$protocol" --dport "$port" -j ACCEPT
+	iptables -A OUTPUT -o "${docker_interface}" -p "$protocol" --sport "$port" -j ACCEPT
+done
 
 # if iptable mangle is available (kernel module) then use mark
 if [[ $iptable_mangle_exit_code == 0 ]]; then

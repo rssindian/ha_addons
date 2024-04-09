@@ -56,17 +56,17 @@ if [[ $VPN_ENABLED == "true" ]]; then
 		echo "[WARNING] Unable to chown/chmod ${OVPN_FLDR}, assuming SMB mountpoint" | ts '%Y-%m-%d %H:%M:%.S'
 	fi
 
-	export VPN_CONFIG=$(find ${OVPN_FLDR} -maxdepth 1 -name "*.ovpn" -print -quit)
+	export VPN_CONFIG=$(find ${OVPN_FLDR} -maxdepth 1 -name "${VPN_FILENAME}.ovpn" -print -quit)
 
 	# If ovpn file not found in /config/openvpn or /config/wireguard then exit
 	if [[ -z "${VPN_CONFIG}" ]]; then
-		echo "[ERROR] No OpenVPN config file found in ${OVPN_FLDR}. Please download one from your VPN provider and restart this container. Make sure the file extension is '.ovpn'" | ts '%Y-%m-%d %H:%M:%.S'
+		echo "[ERROR] Specified OpenVPN config file ${VPN_FILENAME}.ovpn not found in ${OVPN_FLDR}. Please download one from your VPN provider, make sure the file extension is '.ovpn', set the right file name prefix without .ovpn extension in config and restart this container" | ts '%Y-%m-%d %H:%M:%.S'
 		# Sleep so it wont 'spam restart'
 		sleep 10
 		exit 1
 	fi
 
-	echo "[INFO] OpenVPN config file is found at ${VPN_CONFIG}" | ts '%Y-%m-%d %H:%M:%.S'
+	echo "[INFO] Specified OpenVPN config file found at ${VPN_CONFIG}" | ts '%Y-%m-%d %H:%M:%.S'
 
 	# Read username and password env vars and put them in credentials.conf, then add ovpn config for credentials file
 	if [[ ! -z "${VPN_USERNAME}" ]] && [[ ! -z "${VPN_PASSWORD}" ]]; then
@@ -90,60 +90,55 @@ if [[ $VPN_ENABLED == "true" ]]; then
 	
 	# convert CRLF (windows) to LF (unix) for ovpn
 	dos2unix "${VPN_CONFIG}" 1> /dev/null
-	
-	# parse values from the ovpn or conf file
-	export vpn_remote_line=$(cat "${VPN_CONFIG}" | grep -P -o -m 1 '(?<=^remote\s)[^\n\r]+' | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
 
-	if [[ ! -z "${vpn_remote_line}" ]]; then
-		echo "[INFO] VPN remote line defined as '${vpn_remote_line}'" | ts '%Y-%m-%d %H:%M:%.S'
+	vpn_protocol=$(cat "${VPN_CONFIG}" | grep -P -o -m 1 '(?<=^proto\s)[^\r\n]+' | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
+	if [[ ! -z "${vpn_protocol}" ]]; then
+		echo "[INFO] VPN Level Protocol defined as '${vpn_protocol}'" | ts '%Y-%m-%d %H:%M:%.S'
 	else
-		echo "[ERROR] VPN configuration file ${VPN_CONFIG} does not contain 'remote' line, showing contents of file before exit..." | ts '%Y-%m-%d %H:%M:%.S'
-		cat "${VPN_CONFIG}"
-		# Sleep so it wont 'spam restart'
-		sleep 10
-		exit 1
+		echo "[WARNING] VPN Level Protocol not found in ${VPN_CONFIG}, assuming udp, will verify protocol set for each remote" | ts '%Y-%m-%d %H:%M:%.S'
+		vpn_protocol="udp"
 	fi
 
-	export VPN_REMOTE=$(echo "${vpn_remote_line}" | grep -P -o -m 1 '^[^\s\r\n]+' | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
+	# Initialize Port and Protocol List
+	port_protocol_list=""
 
-	if [[ ! -z "${VPN_REMOTE}" ]]; then
-		echo "[INFO] VPN_REMOTE defined as '${VPN_REMOTE}'" | ts '%Y-%m-%d %H:%M:%.S'
-	else
-		echo "[ERROR] VPN_REMOTE not found in ${VPN_CONFIG}, exiting..." | ts '%Y-%m-%d %H:%M:%.S'
-		# Sleep so it wont 'spam restart'
-		sleep 10
-		exit 1
-	fi
+	# Read the ovpn config line by line
+	while IFS= read -r line; do
 
-	export VPN_PORT=$(echo "${vpn_remote_line}" | grep -P -o -m 1 '(?<=\s)\d{2,5}(?=\s)?+' | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
+		#if a line start with 'remote '
+		if [[ $line =~ ^remote\  ]]; then
+			# Extract IP, port, and protocol (assuming space separation)
+			read -r remote_ip remote_port remote_protocol <<< "${line#*remote }"
+			
+			echo "[INFO] Remote IP, Port and Protocol found : '${remote_ip} : ${remote_port} : ${remote_protocol}'" | ts '%Y-%m-%d %H:%M:%.S'
 
-	if [[ ! -z "${VPN_PORT}" ]]; then
-		echo "[INFO] VPN_PORT defined as '${VPN_PORT}'" | ts '%Y-%m-%d %H:%M:%.S'
-	else
-		echo "[ERROR] VPN_PORT not found in ${VPN_CONFIG}, exiting..." | ts '%Y-%m-%d %H:%M:%.S'
-		# Sleep so it wont 'spam restart'
-		sleep 10
-		exit 1
-	fi
-
-	export VPN_PROTOCOL=$(cat "${VPN_CONFIG}" | grep -P -o -m 1 '(?<=^proto\s)[^\r\n]+' | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
-	if [[ ! -z "${VPN_PROTOCOL}" ]]; then
-		echo "[INFO] VPN_PROTOCOL defined as '${VPN_PROTOCOL}'" | ts '%Y-%m-%d %H:%M:%.S'
-	else
-		export VPN_PROTOCOL=$(echo "${vpn_remote_line}" | grep -P -o -m 1 'udp|tcp-client|tcp$' | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
-		if [[ ! -z "${VPN_PROTOCOL}" ]]; then
-			echo "[INFO] VPN_PROTOCOL defined as '${VPN_PROTOCOL}'" | ts '%Y-%m-%d %H:%M:%.S'
-		else
-			echo "[WARNING] VPN_PROTOCOL not found in ${VPN_CONFIG}, assuming udp" | ts '%Y-%m-%d %H:%M:%.S'
-			export VPN_PROTOCOL="udp"
+			# Handle missing protocol or set it to "tcp" if "tcp-client"
+			if [[ -z "$remote_protocol" ]]; then
+				echo "[INFO] Protocol not found against remote assuming '${vpn_protocol}' defined at VPN level" | ts '%Y-%m-%d %H:%M:%.S'
+				remote_protocol=$vpn_protocol
+			elif [[ "$remote_protocol" == "tcp-client" ]]; then
+				echo "[INFO] Protocol found against remote as 'tcp-client' coverting to 'tcp" | ts '%Y-%m-%d %H:%M:%.S'
+				remote_protocol="tcp"
+			fi
+			
+			# Append port and protocol to output variable
+			port_protocol_list+="${remote_port}:${remote_protocol},"
 		fi
-	fi
+	done < "${VPN_CONFIG}" 
 
-	# required for use in iptables
-	if [[ "${VPN_PROTOCOL}" == "tcp-client" ]]; then
-		export VPN_PROTOCOL="tcp"
-	fi
+	# Remove trailing comma (if any)
+	port_protocol_list="${port_protocol_list%,}"
 
+	# Check if any remote lines were found
+	if [[ -z "$port_protocol_list" ]]; then
+		echo "[ERROR] No VPN remote defined in ${VPN_CONFIG}, please check if correct ovpn file is used, Exiting..." | ts '%Y-%m-%d %H:%M:%.S'
+		# Sleep so it wont 'spam restart'
+		sleep 10
+		exit 1
+	else
+		echo "[INFO] List of Ports and Protocols found in ${VPN_CONFIG} : ${port_protocol_list}" | ts '%Y-%m-%d %H:%M:%.S' 
+		export VPN_PORTS_PROTOCOLS=$port_protocol_list;
+	fi
 
 	VPN_DEVICE_TYPE=$(cat "${VPN_CONFIG}" | grep -P -o -m 1 '(?<=^dev\s)[^\r\n\d]+' | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
 	if [[ ! -z "${VPN_DEVICE_TYPE}" ]]; then
@@ -173,22 +168,21 @@ if [[ $VPN_ENABLED == "true" ]]; then
 		export NAME_SERVERS="1.1.1.1,8.8.8.8,1.0.0.1,8.8.4.4"
 	fi
 
+	# split comma seperated string into list from NAME_SERVERS env variable
+	IFS=',' read -ra name_server_list <<< "${NAME_SERVERS}"
+
+	# process name servers in the list
+	for name_server_item in "${name_server_list[@]}"; do
+		# strip whitespace from start and end of lan_network_item
+		name_server_item=$(echo "${name_server_item}" | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
+
+		echo "[INFO] Adding ${name_server_item} to resolv.conf" | ts '%Y-%m-%d %H:%M:%.S'
+		echo "nameserver ${name_server_item}" >> /etc/resolv.conf
+	done
+
 else
 	echo "[WARNING] !!IMPORTANT!! You have set the VPN to disabled, your connection will NOT be secure!" | ts '%Y-%m-%d %H:%M:%.S'
 fi
-
-
-# split comma seperated string into list from NAME_SERVERS env variable
-IFS=',' read -ra name_server_list <<< "${NAME_SERVERS}"
-
-# process name servers in the list
-for name_server_item in "${name_server_list[@]}"; do
-	# strip whitespace from start and end of lan_network_item
-	name_server_item=$(echo "${name_server_item}" | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
-
-	echo "[INFO] Adding ${name_server_item} to resolv.conf" | ts '%Y-%m-%d %H:%M:%.S'
-	echo "nameserver ${name_server_item}" >> /etc/resolv.conf
-done
 
 if [[ -z "${PUID}" ]]; then
 	echo "[INFO] PUID not defined. Defaulting to root user" | ts '%Y-%m-%d %H:%M:%.S'

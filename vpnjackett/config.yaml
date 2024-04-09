@@ -1,5 +1,5 @@
 name: VPN Jackett
-version: v1.3
+version: v1.4
 slug: vpnjackett
 description: Jackett via OpenVPN for Home Assistant
 url: https://github.com/rssindian/ha_addons/vpnjackett
@@ -48,4 +48,4 @@ schema:
 
 panel_icon: mdi:coat-rack
 init: false
-image: ghcr.io/rssindian/vpnjackett-{arch}
+#image: ghcr.io/rssindian/vpnjackett-{arch}

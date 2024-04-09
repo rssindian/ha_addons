@@ -8,10 +8,11 @@ The installation of this add-on is pretty straightforward and not different in
 comparison to installing any other Hass.io add-on.
 
 1. Add https://github.com/rssindian/ha_addons to your Hass.io instance as a repository.
-2. Install the "Jackett" add-on.
-3. Start the "Jackett" add-on.
-4. Check the logs of the "Jackett" to see if everything went well.
-5. Open the web-ui
+2. Install the "VPN Jackett" add-on.
+3. Set required OpenVPN credentials.
+3. Start the "VPN Jackett" add-on.
+4. Check the logs to see if everything went well.
+5. Open the Web-ui and start configuring Jackett
 6. Additional Jackett logs can be found at homeassistant config/vpnjackett/Jackett/logs.txt
 
 
@@ -24,7 +25,7 @@ Jackett add-on configuration:
 This enables additional debug logs. 
 Note: The logging in this addon displays all info and warning by default
 
-### Option: VPN_FILENAME
+### Option: `VPN_FILENAME`
 
 This is required to specify the <file_name> prefix of the .ovpn file. 
 You need to copy the OpenVPN <file_name>.ovpn file from your VPN provider to homeassistant config folder under vpnjackett/openvpn
