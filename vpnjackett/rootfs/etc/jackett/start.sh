@@ -2,6 +2,8 @@
 
 export JKT_FLDR="${APP_FLDR}/Jackett"
 
+export XDG_CONFIG_HOME="${APP_FLDR}"
+
 # Check if /config/APP_NAME/Jackett exists, if not make the directory
 if [[ ! -e ${JKT_FLDR} ]]; then
 	mkdir -p ${JKT_FLDR}

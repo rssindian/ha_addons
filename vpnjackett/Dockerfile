@@ -10,6 +10,7 @@ ARG BUILD_VERSION
 FROM ${BUILD_FROM}
 
 ENV DEBIAN_FRONTEND noninteractive
+ENV APP_NAME="vpnjackett"
 
 VOLUME /config
 
@@ -44,7 +45,7 @@ RUN echo "deb http://deb.debian.org/debian/ bullseye main contrib non-free" >> /
 
 # Remove bullseye source
 RUN sed -i.bak '/deb http:\/\/deb.debian.org\/debian\/ bullseye main contrib non-free/d' /etc/apt/sources.list \
-     && apt update
+&& apt update
 
 # Pull jackett binary
 RUN \
@@ -72,20 +73,9 @@ RUN tar -xzf /opt/jacket.tar.gz -C /opt
     /tmp/* \
     /var/tmp/*
 
-ENV APP_NAME="vpnjackett"
-ENV XDG_DATA_HOME="/config/${APP_NAME}" \
-    XDG_CONFIG_HOME="/config/${APP_NAME}"
-
-# Make directories
-RUN mkdir -p /etc/jackett \
-             /etc/openvpn \
-             /config/${APP_NAME} 
-
 #Move folders in this build
-ADD openvpn/ /etc/openvpn/
-ADD jackett/ /etc/jackett/
+ADD rootfs/ /
 
 RUN chmod +x /etc/jackett/*.sh /etc/jackett/*.init /etc/openvpn/*.sh /opt/Jackett/jackett
 
-EXPOSE 9117
 CMD ["/etc/openvpn/init.sh"]

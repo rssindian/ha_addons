@@ -3,7 +3,16 @@
 # Forked from binhex's OpenVPN dockers
 set -e
 
-export APP_FLDR="/config/${APP_NAME}"
+if [[ ! -e ${CONFIG_FOLDER} ]]; then
+	echo "[ERROR] Specified config folder ${CONFIG_FOLDER} not found. Please provide the right locatioon in config" | ts '%Y-%m-%d %H:%M:%.S'
+	# Sleep so it wont 'spam restart'
+	sleep 10
+	exit 1
+fi
+
+echo "[INFO] Config folder set to'${CONFIG_FOLDER}'" | ts '%Y-%m-%d %H:%M:%.S'
+
+export APP_FLDR="${CONFIG_FOLDER}/${APP_NAME}"
 export OVPN_FLDR="${APP_FLDR}/openvpn"
 
 # check for presence of network interface docker0

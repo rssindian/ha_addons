@@ -2,6 +2,7 @@
 
 #Export all config variables to environment variables for use in bash
 export DEBUG=$(bashio::config 'DEBUG_ENABLED' | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
+export CONFIG_FOLDER=$(bashio::config 'CONFIG_FOLDER' | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
 export VPN_FILENAME=$(bashio::config 'VPN_FILENAME' | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
 export VPN_USERNAME=$(bashio::config 'VPN_USERNAME' | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
 export VPN_PASSWORD=$(bashio::config 'VPN_PASSWORD' | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
@@ -31,4 +32,4 @@ fi
 #export ADDITIONAL_PORTS=$(bashio::config 'ADDITIONAL_PORTS' | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
 
 #call bash script
-exec /bin/bash /etc/openvpn/start.sh
+exec /bin/bash /etc/openvpn/start.sh 

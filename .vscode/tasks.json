@@ -17,17 +17,16 @@
     },
     {
       "type": "shell",
-      "label": "Copy to HA Addon Local",
-      "command": "cp",
+      "label": "Deploy vpnjackett",
+      "command": "robocopy",
       "args": [
-          "-recurse",
-          "-force",
-          "${workspaceFolder}/vpnjackett/",
-          "Z:/vpnjackett/"
+          "/MIR",
+          "${workspaceFolder}/vpnjackett",
+          "Z:/vpnjackett"
       ],
       "presentation": {
         "reveal": "always",
-        "panel": "new"
+        "panel": "shared",
       },
       "problemMatcher": []
     }
