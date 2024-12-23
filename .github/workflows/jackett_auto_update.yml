@@ -37,7 +37,10 @@ jobs:
           else
             echo "run-build=failure" >> $GITHUB_OUTPUT
           fi
-         
+      - name: Debug Output
+        run: |
+          echo "run-build value: ${{ steps.update-result.outputs.run-build }}"
+    
   build:
     needs: check-and-update
     runs-on: ubuntu-latest
