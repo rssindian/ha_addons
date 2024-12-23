@@ -25,9 +25,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}  # Pass the GH_TOKEN to the script
         run: |
-          chmod +x autoupdate-jackett.sh
-          ./autoupdate-jackett.sh
-          
+          chmod +x autoupdate_jackett.sh
+          ./autoupdate_jackett.sh
+  
   build:
     runs-on: ubuntu-latest
     name: Build ${{ matrix.arch }} ${{ matrix.addon }} add-on
