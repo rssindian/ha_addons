@@ -24,10 +24,10 @@ NEW_VERSION=$(echo "$CURRENT_VERSION" | awk -F. '{$NF += 1}1' OFS='.')
 sed -i "2s/version: v.*/version: v$NEW_VERSION/" "$FILE_PATH"
 echo "Updated version in ./vpnjackett/config.yaml to: $NEW_VERSION"
 
-# Step 4: Update stored version in .current_version
+# Step 4: Update stored version in .jackett_version
 echo "Updating .current_version with the latest version..."
 echo "$UPSTREAM_VERSION" > .jackett_version
-echo "New .current_version: $(cat .jackett_version)"
+echo "New .jackett_version: $(cat .jackett_version)"
 
 # Step 5: Commit and push changes
 git config --global user.name "GitHub Actions Bot"
@@ -37,7 +37,7 @@ git config --global user.email "actions@github.com"
 git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/$GITHUB_REPOSITORY.git
 
 # Commit all changes in a single commit
-git add "$FILE_PATH" .current_version
+git add "$FILE_PATH" .jackett_version
 git commit -m "Update Jackett to $UPSTREAM_VERSION"
 git push origin main
 
