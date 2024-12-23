@@ -27,31 +27,17 @@ echo "Updating .current_version with the latest version..."
 echo "$UPSTREAM_VERSION" > .current_version
 echo "New .current_version: $(cat .current_version)"
 
-# Step 5: Commit and push changes together
+# Step 5: Commit and push changes
 git config --global user.name "GitHub Actions Bot"
 git config --global user.email "actions@github.com"
 
 # Ensure we're using the token for authentication (in the GitHub Actions context)
-git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
+git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/$GITHUB_REPOSITORY.git
 
-# Stage both the updated config.yaml and .current_version
+# Commit all changes in a single commit
 git add "$FILE_PATH" .current_version
-
-# Commit both changes in one commit
-git commit -m "Update version to $UPSTREAM_VERSION and .current_version"
-
-# Push changes to the repository
-git push origin HEAD
+git commit -m "Update Jackett to $UPSTREAM_VERSION"
+git push origin main
 
 echo "Version update completed successfully and pushed in a single commit."
 
-# Step 6: Trigger builder workflow using the GitHub API (corrected)
-echo "Triggering Builder Workflow directly via GitHub API..."
-
-# Trigger the builder workflow using the `workflow_dispatch` event
-curl -X POST \
-  -H "Authorization: token $GH_TOKEN" \
-  -d '{"ref": "main"}' \
-  https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/builder.yaml/dispatches
-
-echo "Builder workflow triggered successfully."
