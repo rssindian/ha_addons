@@ -11,8 +11,8 @@ echo "Stored Version: $STORED_VERSION"
 
 if [ "$UPSTREAM_VERSION" == "$STORED_VERSION" ]; then
   echo "Version is up-to-date. Exiting..."
-  echo "result=up-to-date" >> $GITHUB_ENV
-  exit 0
+  # Indicate failure (no update)
+  exit 1
 fi
 
 echo "Version changed! Proceeding with update..."
@@ -41,7 +41,7 @@ git add "$FILE_PATH" .jackett_version
 git commit -m "Update Jackett to $UPSTREAM_VERSION"
 git push origin main
 
-# Indicate success
-echo "result=success" >> $GITHUB_ENV
 echo "Version update completed successfully and pushed in a single commit."
+
+# Indicate success
 exit 0
