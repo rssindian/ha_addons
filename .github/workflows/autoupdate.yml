@@ -35,4 +35,4 @@ jobs:
           -H "Accept: application/vnd.github.everest-preview+json" \
           -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
           https://api.github.com/repos/${{ github.repository }}/dispatches \
-          -d '{"event_type": "autoupdate", "client_payload": {}}'
+          -d '{"event_type": "AutoUpdate", "client_payload": {}}'
