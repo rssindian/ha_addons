@@ -4,10 +4,7 @@ env:
   BUILD_ARGS: "--test"
   MONITORED_FILES: "build.yaml config.yaml Dockerfile rootfs"
 
-on: 
-  push:
-  repository_dispatch:
-    types: [AutoUpdate]
+on: push
 
 jobs:
   init:
@@ -22,9 +19,7 @@ jobs:
 
       - name: Get changed files
         id: changed_files
-        uses: tj-actions/changed-files@v35
-        with:
-          files: ${{ env.MONITORED_FILES }}
+        uses: jitterbit/get-changed-files@v1
 
       - name: Find add-on directories
         id: addons
@@ -35,13 +30,15 @@ jobs:
         run: |
           declare -a changed_addons
           for addon in ${{ steps.addons.outputs.addons }}; do
-            for file in ${{ env.MONITORED_FILES }}; do
-              if [[ "${{ steps.changed_files.outputs.all_changed_files }}" =~ "$addon/$file" ]]; then
-                if [[ ! " ${changed_addons[@]} " =~ " $addon " ]]; then
-                  changed_addons+=("\"$addon\",");
-                fi
-              fi
-            done
+            if [[ "${{ steps.changed_files.outputs.all }}" =~ $addon ]]; then
+              for file in ${{ env.MONITORED_FILES }}; do
+                  if [[ "${{ steps.changed_files.outputs.all }}" =~ $addon/$file ]]; then
+                    if [[ ! "${changed_addons[@]}" =~ $addon ]]; then
+                      changed_addons+=("\"${addon}\",");
+                    fi
+                  fi
+              done
+            fi
           done
 
           changed=$(echo ${changed_addons[@]} | rev | cut -c 2- | rev)
@@ -52,7 +49,6 @@ jobs:
             echo "addons=[$changed]" >> $GITHUB_OUTPUT;
           else
             echo "No add-on had any monitored files changed (${{ env.MONITORED_FILES }})";
-            echo "changed=false" >> $GITHUB_OUTPUT;
           fi
   build:
     needs: init
