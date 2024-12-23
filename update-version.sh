@@ -45,11 +45,13 @@ git push origin HEAD
 
 echo "Version update completed successfully and pushed in a single commit."
 
-# Step 6: Trigger builder workflow using curl
-echo "Triggering Builder Workflow..."
+# Step 6: Trigger builder workflow using the GitHub API (without relying on `workflow_run`)
+echo "Triggering Builder Workflow directly via GitHub API..."
+
+# Trigger the builder workflow using the `workflow_dispatch` event
 curl -X POST \
   -H "Authorization: token $GH_TOKEN" \
   -d '{"event_type": "version-update-complete"}' \
-  https://api.github.com/repos/${GITHUB_REPOSITORY}/dispatches
+  https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/builder.yaml/dispatches
 
 echo "Builder workflow triggered successfully."
