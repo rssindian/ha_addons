@@ -42,8 +42,8 @@ echo "Version update completed successfully".
 # Step 6: Trigger builder workflow using curl
 echo "Triggering Builder Workflow..."
 curl -X POST \
-  -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+  -H "Authorization: token $GH_TOKEN" \
   -d '{"event_type": "version-update-complete"}' \
-  https://api.github.com/repos/${{ github.repository }}/dispatches
+  https://api.github.com/repos/${GITHUB_REPOSITORY}/dispatches
 
 echo "Builder workflow triggered successfully."
