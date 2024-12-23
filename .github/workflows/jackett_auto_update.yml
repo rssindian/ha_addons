@@ -1,8 +1,5 @@
 name: Auto Update Jackett
 
-env:
-  BUILD_ARGS: "--test"
-  
 on:
   schedule:
     - cron: "0 3 * * 6"
@@ -73,16 +70,13 @@ jobs:
           elif [[ "${{ steps.info.outputs.architectures }}" =~ ${{ matrix.arch }} ]]; then
             echo "build_arch=true" >> $GITHUB_OUTPUT;
             echo "image=$(echo ${{ steps.info.outputs.image }} | cut -d'/' -f3)" >> $GITHUB_OUTPUT;
-            if [[ -z "${{ github.head_ref }}" ]] && [[ "${{ github.event_name }}" == "push" ]]; then
-                echo "BUILD_ARGS=" >> $GITHUB_ENV;
-            fi
           else
             echo "${{ matrix.arch }} is not a valid arch for ${{ matrix.addon }}, skipping build";
             echo "build_arch=false" >> $GITHUB_OUTPUT;
           fi
 
       - name: Login to GitHub Container Registry
-        if: env.BUILD_ARGS != '--test'
+        if: steps.check.outputs.build_arch == 'true'
         uses: docker/login-action@v3.1.0
         with:
           registry: ghcr.io
@@ -94,7 +88,6 @@ jobs:
         uses: home-assistant/builder@2024.03.5
         with:
           args: |
-            ${{ env.BUILD_ARGS }} \
             --${{ matrix.arch }} \
             --target /data/${{ matrix.addon }} \
             --image "${{ steps.check.outputs.image }}" \
