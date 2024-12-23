@@ -1,0 +1,33 @@
+name: Update Version Automatically
+
+# Trigger on a schedule (daily at midnight) or manually
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  check-and-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up dependencies
+      - name: Set Up Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      # Step 3: Run the update script
+      - name: Run Update Script
+        run: |
+          chmod +x update-version.sh
+          ./update-version.sh
+
+      # Optional: Notify on failure or success
+      - name: Notify Success
+        if: ${{ success() }}
+        run: echo "Version updated successfully!"
