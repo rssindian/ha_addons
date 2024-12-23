@@ -31,6 +31,9 @@ jobs:
           chmod +x autoupdate_jackett.sh
           ./autoupdate_jackett.sh
           
+          # Debug: Print the exit code of the update script
+          echo "Exit status of update script: $?"
+          
           # Capture the exit code of autoupdate_jackett.sh
           if [[ $? -eq 0 ]]; then
             echo "run-build=success" >> $GITHUB_OUTPUT
