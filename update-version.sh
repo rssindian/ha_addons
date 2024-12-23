@@ -52,6 +52,6 @@ echo "Triggering Builder Workflow directly via GitHub API..."
 curl -X POST \
   -H "Authorization: token $GH_TOKEN" \
   -d '{"ref": "main"}' \
-  https://api.github.com/repos/${{ github.repository }}/actions/workflows/builder.yml/dispatches
+  https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/builder.yml/dispatches
 
 echo "Builder workflow triggered successfully."
