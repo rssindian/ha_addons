@@ -1,5 +1,8 @@
 name: Auto Update Jackett
 
+env:
+  BUILD_ARGS: "--test"
+  
 on:
   schedule:
     - cron: "0 3 * * 6"
