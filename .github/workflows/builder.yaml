@@ -4,7 +4,18 @@ env:
   BUILD_ARGS: "--test"
   MONITORED_FILES: "build.yaml config.yaml Dockerfile rootfs"
 
-on: push
+on: 
+  # Trigger on push to the specified branch(es)
+  push:
+    branches:
+      - main
+  # Trigger when another workflow completes successfully
+  workflow_run:
+    workflows:
+      - Auto Update Version
+    types:
+      - completed
+
 
 jobs:
   init:
