@@ -15,7 +15,7 @@ fi
 echo "Version changed! Proceeding with update..."
 
 # Step 3: Increment the version in config.yaml
-FILE_PATH="config.yaml"
+FILE_PATH="./vpnjackett/config.yaml"
 CURRENT_VERSION=$(sed -n '2s/version: v//p' "$FILE_PATH")
 NEW_VERSION=$(echo "$CURRENT_VERSION" | awk -F. '{$NF += 1}1' OFS='.')
 sed -i "2s/version: v.*/version: v$NEW_VERSION/" "$FILE_PATH"
