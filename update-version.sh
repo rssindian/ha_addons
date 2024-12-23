@@ -38,3 +38,12 @@ git commit -m "Auto Update Jackett to $UPSTREAM_VERSION"
 git push
 
 echo "Version update completed successfully".
+
+# Step 6: Trigger builder workflow using curl
+echo "Triggering Builder Workflow..."
+curl -X POST \
+  -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+  -d '{"event_type": "version-update-complete"}' \
+  https://api.github.com/repos/${{ github.repository }}/dispatches
+
+echo "Builder workflow triggered successfully."
