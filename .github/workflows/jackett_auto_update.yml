@@ -30,8 +30,13 @@ jobs:
         run: |
           chmod +x autoupdate_jackett.sh
           ./autoupdate_jackett.sh
-          # Set the output based on the environment variable
-          echo "run-build=${{ env.result }}" >> $GITHUB_OUTPUT
+          
+          # Capture the exit code of autoupdate_jackett.sh
+          if [[ $? -eq 0 ]]; then
+            echo "run-build=success" >> $GITHUB_OUTPUT
+          else
+            echo "run-build=failure" >> $GITHUB_OUTPUT
+          fi
          
   build:
     needs: check-and-update
