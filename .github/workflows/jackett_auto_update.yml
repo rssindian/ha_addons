@@ -1,4 +1,4 @@
-name: Auto Update Jackett
+name: Jackett Auto Update
 
 on:
   schedule:
