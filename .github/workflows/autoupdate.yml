@@ -31,6 +31,8 @@ jobs:
 
       # Step 4: Run the update script
       - name: Run Update Script
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}  # Pass the GH_TOKEN to the script
         run: |
           chmod +x update-version.sh
           ./update-version.sh
