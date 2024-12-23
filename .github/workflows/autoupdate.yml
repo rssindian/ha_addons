@@ -1,4 +1,4 @@
-name: Update Version Automatically
+name: Auto Update Version
 
 # Trigger on a schedule (daily at midnight) or manually
 on:
