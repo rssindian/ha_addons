@@ -8,29 +8,37 @@ on:
 jobs:
   check-and-update:
     runs-on: ubuntu-latest
+    outputs:
+      run-build: ${{ steps.update-result.outputs.run-build }}
 
     steps:
-      # Step 1: Check out the repository
+      # Check out the repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up dependencies
+      # Set up dependencies
       - name: Set Up Tools
         run: |
           sudo apt-get update
           sudo apt-get install -y jq
 
-      # Step 3: Run the update script (passing the GH_TOKEN as an environment variable)
+      # Run the update script (passing the GH_TOKEN as an environment variable)
       - name: Run Update Script
+        id: update-result
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}  # Pass the GH_TOKEN to the script
         run: |
           chmod +x autoupdate_jackett.sh
           ./autoupdate_jackett.sh
-  
+          # Set the output based on the environment variable
+          outputs:
+            run-build: ${{ env.result }}
+         
   build:
+    needs: check-and-update
     runs-on: ubuntu-latest
-    name: Build ${{ matrix.arch }} ${{ matrix.addon }} add-on
+    name: Build Add-ons
+    if: needs.check-and-update.outputs.run-build == 'success'
     strategy:
       matrix:
         addon: ["vpnjackett"]
