@@ -2,7 +2,7 @@
 #!/bin/bash
 
 CONFIG_FILE="./vpnjackett/config.yaml"
-VERSION_FILE="./vpnjackett/.jackett_version"
+VERSION_FILE="./vpnjackett/.version"
 
 # Step 1: Fetch the latest upstream version
 UPSTREAM_VERSION=$(curl -s https://api.github.com/repos/Jackett/Jackett/releases/latest | jq -r '.tag_name')
