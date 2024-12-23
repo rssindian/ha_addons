@@ -1,6 +1,5 @@
 name: Auto Update Version
 
-# Trigger on a schedule (daily at midnight) or manually
 on:
   schedule:
     - cron: "0 0 * * *"
@@ -21,13 +20,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y jq
 
-      # Step 3: Run the update script
+      # Step 3: Configure Git with PAT
+      - name: Configure Git
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
+
+      # Step 4: Run the update script
       - name: Run Update Script
         run: |
           chmod +x update-version.sh
           ./update-version.sh
-
-      # Optional: Notify on failure or success
-      - name: Notify Success
-        if: ${{ success() }}
-        run: echo "Version updated successfully!"
