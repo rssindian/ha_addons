@@ -27,3 +27,12 @@ jobs:
         run: |
           chmod +x update-version.sh
           ./update-version.sh
+          
+      #Step 4: Trigger builder workflow
+      - name: Trigger Builder Workflow
+        run: |
+          curl -X POST \
+          -H "Accept: application/vnd.github.everest-preview+json" \
+          -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}/dispatches \
+          -d '{"event_type": "autoupdate"}'
