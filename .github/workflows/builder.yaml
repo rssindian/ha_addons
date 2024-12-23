@@ -4,7 +4,10 @@ env:
   BUILD_ARGS: "--test"
   MONITORED_FILES: "build.yaml config.yaml Dockerfile rootfs"
 
-on: push
+on: 
+  push:
+  repository_dispatch:
+    types: [autoupdate]
 
 jobs:
   init:
