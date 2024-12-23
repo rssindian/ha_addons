@@ -36,7 +36,7 @@ git config --global user.name "GitHub Actions Bot"
 git config --global user.email "actions@github.com"
 
 # Ensure we're using the token for authentication (in the GitHub Actions context)
-git remote set-url origin https://x-access-token:${PT_TOKEN}@github.com/$GITHUB_REPOSITORY.git
+git remote set-url origin https://x-access-token:${PA_TOKEN}@github.com/$GITHUB_REPOSITORY.git
 
 # Commit all changes in a single commit
 git add "$CONFIG_FILE" "$VERSION_FILE"
