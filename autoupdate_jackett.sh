@@ -6,7 +6,7 @@ UPSTREAM_VERSION=$(curl -s https://api.github.com/repos/Jackett/Jackett/releases
 echo "Latest Upstream Version: $UPSTREAM_VERSION"
 
 # Step 2: Read the stored version
-STORED_VERSION=$(cat .current_version)
+STORED_VERSION=$(cat .jackett_version)
 echo "Stored Version: $STORED_VERSION"
 
 if [ "$UPSTREAM_VERSION" == "$STORED_VERSION" ]; then
@@ -25,8 +25,8 @@ echo "Updated version in ./vpnjackett/config.yaml to: $NEW_VERSION"
 
 # Step 4: Update stored version in .current_version
 echo "Updating .current_version with the latest version..."
-echo "$UPSTREAM_VERSION" > .current_version
-echo "New .current_version: $(cat .current_version)"
+echo "$UPSTREAM_VERSION" > .jackett_version
+echo "New .current_version: $(cat .jackett_version)"
 
 # Step 5: Commit and push changes
 git config --global user.name "GitHub Actions Bot"
