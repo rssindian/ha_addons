@@ -6,8 +6,49 @@ on:
   workflow_dispatch:
 
 jobs:
-  check-and-build:
+  check-and-update:
     runs-on: ubuntu-latest
+    outputs:
+      run-build: ${{ steps.update-result.outputs.run-build }}
+
+    steps:
+      # Check out the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Set up dependencies
+      - name: Set Up Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      # Run the update script (passing the GH_TOKEN as an environment variable)
+      - name: Run Update Script
+        id: update-result
+        env:
+          PA_TOKEN: ${{ secrets.PA_TOKEN }}  # Pass the GH_TOKEN to the script
+        run: |
+          chmod +x ./vpnjackett/autoupgrade.sh
+          ./vpnjackett/autoupgrade.sh
+          
+          # Debug: Print the exit code of the update script
+          echo "Exit status of update script: $?"
+          
+          # Capture the exit code of autoupdate_jackett.sh
+          if [[ $? -eq 0 ]]; then
+            echo "run-build=success" >> $GITHUB_OUTPUT
+          else
+            echo "run-build=failure" >> $GITHUB_OUTPUT
+          fi
+      - name: Debug Output
+        run: |
+          echo "run-build value: ${{ steps.update-result.outputs.run-build }}"
+    
+  build:
+    needs: check-and-update
+    runs-on: ubuntu-latest
+    name: Build Add-ons
+    if: needs.check-and-update.outputs.run-build == 'success'
     strategy:
       matrix:
         addon: ["vpnjackett"]
@@ -17,51 +58,19 @@ jobs:
       packages: write
 
     steps:
-      # Check out the repository
-      - name: Checkout Repository
-        id: checkout
-        uses: actions/checkout@v4.2.2
+      - name: Pull Latest Changes
+        run: |
+          git fetch origin
+          git reset --hard origin/${{ github.ref_name }}
 
-      # Set up dependencies
-      - name: Set Up Tools
-        id: tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq
-
-      # Run the update script (passing the PA_TOKEN as an environment variable)
-      - name: Run Update Script
-        id: updateVer
-        env:
-          PA_TOKEN: ${{ secrets.PA_TOKEN }}  # Pass the PA_TOKEN to the script
-        run: |
-          chmod +x autoupdate_jackett.sh
-          ./autoupdate_jackett.sh
-          
-          # Debug: Print the exit code of the update script
-          echo "Exit status of update script: $?"
-          
-          # Capture the exit code of autoupdate_jackett.sh
-          if [[ $? -eq 0 ]]; then
-            echo "status=success" >> $GITHUB_OUTPUT
-          else
-            echo "status=failure" >> $GITHUB_OUTPUT
-          fi
-          
-      - name: Debug Output
-        run: |
-          echo "updateVer Status: ${{ steps.updateVer.outputs.status }}"
-          
       - name: Get information
         id: info
-        if: steps.updateVer.outputs.status == 'success'
         uses: home-assistant/actions/helpers/info@master
         with:
           path: "./${{ matrix.addon }}"
 
       - name: Check if add-on should be built
         id: check
-        if: steps.updateVer.outputs.status == 'success'
         run: |
           if [[ "${{ steps.info.outputs.image }}" == "null" ]]; then
             echo "Image property is not defined, skipping build"
@@ -76,7 +85,7 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: steps.check.outputs.build_arch == 'true'
-        uses: docker/login-action@v3.3.0
+        uses: docker/login-action@v3.1.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -84,7 +93,7 @@ jobs:
 
       - name: Build ${{ matrix.addon }} add-on
         if: steps.check.outputs.build_arch == 'true'
-        uses: home-assistant/builder@2024.08.2
+        uses: home-assistant/builder@2024.03.5
         with:
           args: |
             --${{ matrix.arch }} \
