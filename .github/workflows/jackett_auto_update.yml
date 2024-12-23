@@ -31,8 +31,7 @@ jobs:
           chmod +x autoupdate_jackett.sh
           ./autoupdate_jackett.sh
           # Set the output based on the environment variable
-          outputs:
-            run-build: ${{ env.result }}
+          echo "run-build=${{ env.result }}" >> $GITHUB_OUTPUT
          
   build:
     needs: check-and-update
