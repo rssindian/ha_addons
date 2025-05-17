@@ -1,5 +1,5 @@
 name: VPN Jackett
-version: v2.46
+version: v2.47
 slug: vpnjackett
 description: Jackett via OpenVPN for Home Assistant
 url: https://github.com/rssindian/ha_addons/vpnjackett
