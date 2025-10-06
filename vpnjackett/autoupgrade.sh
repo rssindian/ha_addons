@@ -81,7 +81,7 @@ git config --global user.email "actions@github.com"
 git remote set-url origin https://x-access-token:${PA_TOKEN}@github.com/$GITHUB_REPOSITORY.git
 
 # Commit all changes in a single commit
-git add "$CONFIG_FILE" "$VERSION_FILE"
+git add "$CONFIG_FILE" "$VERSION_FILE" "$CHANGELOG_FILE"
 git commit -m "Update Jackett to $UPSTREAM_VERSION"
 git push origin "${DEFAULT_BRANCH}"
 
