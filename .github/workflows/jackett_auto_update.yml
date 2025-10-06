@@ -31,11 +31,13 @@ jobs:
           chmod +x ./vpnjackett/autoupgrade.sh
           ./vpnjackett/autoupgrade.sh
           
+          status=$? 
+
           # Debug: Print the exit code of the update script
           echo "Exit status of update script: $?"
           
           # Capture the exit code of autoupdate_jackett.sh
-          if [[ $? -eq 0 ]]; then
+          if [[ $status -eq 0 ]]; then
             echo "run-build=success" >> $GITHUB_OUTPUT
           else
             echo "run-build=failure" >> $GITHUB_OUTPUT
