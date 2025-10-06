@@ -57,11 +57,11 @@ UPSTREAM_LINK="https://github.com/${UPSTREAM_REPO}/releases/tag/${UPSTREAM_VERSI
 # Build the new changelog section
 TMP_CL="${CHANGELOG_FILE}.new"
 {
-  echo "## v${NEW_VERSION} – ${DATE_STR}"
-  echo "### Upstream (${UPSTREAM_REPO} ${UPSTREAM_VERSION})"
+  echo "## ${DATE_STR}"
+  echo "### Upstream (Jackett ${UPSTREAM_VERSION})"
   echo "Link: ${UPSTREAM_LINK}"
   echo
-  echo "${UPSTREAM_NOTES}"
+  echo "${UPSTREAM_NOTES_CLEAN}"
 } > "$TMP_CL"
 
 mv "$TMP_CL" "$CHANGELOG_FILE"
