@@ -1,15 +1,16 @@
-## 2025-10-25
-### Upstream (Jackett v0.24.179)
-Link: https://github.com/Jackett/Jackett/releases/tag/v0.24.179
+## 2025-11-01
+### Upstream (Jackett v0.24.234)
+Link: https://github.com/Jackett/Jackett/releases/tag/v0.24.234
 
 
 ## Changes:
-* [ea217e8](https://github.com/Jackett/Jackett/commit/ea217e89ac3024f8016a84d9fdf1d809fb95974b) dontorrent: new tld
-* [9ce111a](https://github.com/Jackett/Jackett/commit/9ce111a8706eaa04336b6bc4e0ce08e05412608d) Update rudub
-* [b129122](https://github.com/Jackett/Jackett/commit/b1291227fbe769bda9fdc9fe6d7a76afc6179f45) theshow: CA expired
-* [bae9edf](https://github.com/Jackett/Jackett/commit/bae9edfa8774fb495c5428e8b97f49be5af0b77f) thegeeks: CA expired
-* [f74cd60](https://github.com/Jackett/Jackett/commit/f74cd603f691f028ef32f9739bef053c9beb9f65) noname-club: new cats
-* [4138905](https://github.com/Jackett/Jackett/commit/413890554316b21b0b5ab2d7908468242edc5044) torrentqq: bump domains
-* [2751cd4](https://github.com/Jackett/Jackett/commit/2751cd430727ccdb5fa6668bb2aa46f366a648d2) riperam: grabs  can be a missing
+* [7c4a08c](https://github.com/Jackett/Jackett/commit/7c4a08c7ccaf196113f5b6a157e89b0c37b9f656) dontorrent: new tld
+* [547dcc3](https://github.com/Jackett/Jackett/commit/547dcc3bde4ff5d7f43eff296631a75af1211a86) Update rudub
+* [4ca10e4](https://github.com/Jackett/Jackett/commit/4ca10e45e52d92fa2d7840458b2b9326e4b94bc1) pterclub: switch domains com -> net. resolves #7950
+* [13458a1](https://github.com/Jackett/Jackett/commit/13458a16eb70deea45ed51e97c176dd69025aab3) core: add IPv6 ULAs to known networks
+* [f779b3a](https://github.com/Jackett/Jackett/commit/f779b3ac8085e1df159d07e93b5306426e9280bc) uhdtorrent: fix cats
+* [d85a2f8](https://github.com/Jackett/Jackett/commit/d85a2f84f3116aaaf7123929dffe5e010cb16f56) r4e: new cat
+* [8acdcfb](https://github.com/Jackett/Jackett/commit/8acdcfb935ec8564858a7262f0754e4c20a854dc) huntorrent: update cats
+* [aecfe64](https://github.com/Jackett/Jackett/commit/aecfe64819a8b0ab2da63d179f3621cadf1d53d5) torrentqq: bump domains
 
-This list of changes was [auto generated](https://dev.azure.com/Jackett/Jackett/_build/results?buildId=14696&view=logs).
+This list of changes was [auto generated](https://dev.azure.com/Jackett/Jackett/_build/results?buildId=14751&view=logs).
