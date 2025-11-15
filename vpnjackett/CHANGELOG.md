@@ -1,14 +1,14 @@
-## 2025-11-08
-### Upstream (Jackett v0.24.255)
-Link: https://github.com/Jackett/Jackett/releases/tag/v0.24.255
+## 2025-11-15
+### Upstream (Jackett v0.24.306)
+Link: https://github.com/Jackett/Jackett/releases/tag/v0.24.306
 
 
 ## Changes:
-* [2df84ce](https://github.com/Jackett/Jackett/commit/2df84ce82d31a2bb52110e4e8243f3dcc1bf85a6) dontorrent: new tld
-* [1b00e38](https://github.com/Jackett/Jackett/commit/1b00e38094e8bf06ca1456d27aed5d56d1974ddb) rudub workflow part 2 of 2 previous domain homes -> pics
-* [42ec7db](https://github.com/Jackett/Jackett/commit/42ec7db599adf18af5420463d662dd11bd1fb64d) Update rudub
-* [ad60961](https://github.com/Jackett/Jackett/commit/ad609613479475b107aba9ad1657dbf4ab89130c) rudub workflow part 1 of 2 current domain homes -> pics
-* [c2bb44d](https://github.com/Jackett/Jackett/commit/c2bb44dfb6a5356bf24c361905a27d1ff40f890f) torrentqq: bump domain
-* [f218af3](https://github.com/Jackett/Jackett/commit/f218af30b9b7042ff4ea1624922705b73d9dd5aa) ilolicon: removed. resolves #15230
+* [15c64f9](https://github.com/Jackett/Jackett/commit/15c64f9f6600bf792a10d7b07c4b31306c053fa8) Update rudub
+* [f1f8f0f](https://github.com/Jackett/Jackett/commit/f1f8f0f756a274013cb3b4f6b3fda5861f88e822) mvgroup: add flaresolverr info (#16289)
+* [b3d4ec6](https://github.com/Jackett/Jackett/commit/b3d4ec6f23a9b708fb4afc463d440ee91e6109c5) Update README.md
+* [7f33664](https://github.com/Jackett/Jackett/commit/7f33664f97b58992cfa64ef35154b09575bdd3f8) sextorrent: new cats
+* [43aaaf4](https://github.com/Jackett/Jackett/commit/43aaaf414298f886875a5deb4748e215d48d9152) torrentqq: bump domain
+* [20a0bed](https://github.com/Jackett/Jackett/commit/20a0bedc3be5e150de9ea9408945f7e30083cc4e) magnetcat: bump alternate domains
 
-This list of changes was [auto generated](https://dev.azure.com/Jackett/Jackett/_build/results?buildId=14772&view=logs).
+This list of changes was [auto generated](https://dev.azure.com/Jackett/Jackett/_build/results?buildId=14824&view=logs).
