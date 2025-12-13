@@ -1,10 +1,12 @@
-## 2025-12-06
-### Upstream (Jackett v0.24.404)
-Link: https://github.com/Jackett/Jackett/releases/tag/v0.24.404
+## 2025-12-13
+### Upstream (Jackett v0.24.441)
+Link: https://github.com/Jackett/Jackett/releases/tag/v0.24.441
 
 
 ## Changes:
-* [a0d1131](https://github.com/Jackett/Jackett/commit/a0d1131ec4da458b2094ebd3cbf2a2b8d47303cc) torrentqq: bump domains
-* [218306f](https://github.com/Jackett/Jackett/commit/218306fdf8b4c55946b956b90eff72584dec1ee9) Update rudub
+* [331aaa7](https://github.com/Jackett/Jackett/commit/331aaa7df09850298c6f230b082cca7d3390337b) Update rudub
+* [3c3ce1d](https://github.com/Jackett/Jackett/commit/3c3ce1d06fc194a25ca2e59d5a40cb03f1345501) aither: bump engine tag
+* [d201b76](https://github.com/Jackett/Jackett/commit/d201b762b736491f06af3926c3a9d83058a948c2) polskie-torrenty: new layout resolves #15712
+* [6014009](https://github.com/Jackett/Jackett/commit/601400970d354bb2bd3d9089453b0db85bebb599) torrentqq: bump domains
 
-This list of changes was [auto generated](https://dev.azure.com/Jackett/Jackett/_build/results?buildId=14922&view=logs).
+This list of changes was [auto generated](https://dev.azure.com/Jackett/Jackett/_build/results?buildId=14959&view=logs).
