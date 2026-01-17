@@ -1,22 +1,21 @@
-## 2026-01-10
-### Upstream (Jackett v0.24.790)
-Link: https://github.com/Jackett/Jackett/releases/tag/v0.24.790
+## 2026-01-17
+### Upstream (Jackett v0.24.863)
+Link: https://github.com/Jackett/Jackett/releases/tag/v0.24.863
 
 
 ## Changes:
-* [60106aa](https://github.com/Jackett/Jackett/commit/60106aa5a31971393fa2925d8afacae7f3ebc83c) jpopsuki:  replace specials with space resolves #16441
-* [40f7201](https://github.com/Jackett/Jackett/commit/40f72010fdbe98c17b70290df7d441d0f16c8719) arabicsource: update cats #16454
-* [c24396f](https://github.com/Jackett/Jackett/commit/c24396f7aaee8fb5398d7e9df021c11f9daaaf79) leech24: update torrent-search resolves #12553
-* [33dbf39](https://github.com/Jackett/Jackett/commit/33dbf3986131ed2a71a992c30cc5f21f5bb18027) girotorrent: xbtitFM v4.2.12 resolves #6766
-* [7e5bf2d](https://github.com/Jackett/Jackett/commit/7e5bf2dac06f7c24d7d3be178997d975babcbfcd) therarbg: removed alt domain resolves #14685
-* [4ca5725](https://github.com/Jackett/Jackett/commit/4ca5725163309787ea04be9a789f30f974b7f0e8) wdt: removed. resolves #7033
-* [8ae10af](https://github.com/Jackett/Jackett/commit/8ae10afa83d368ea18f91bd059b5b2e2119df2b7) idope: removed. resolves #1386
-* [359d27d](https://github.com/Jackett/Jackett/commit/359d27d35977e47c04e113d8add5a4305ea4f3ab) chore: add shutdown API endpoint (#16455)
-* [4ea6018](https://github.com/Jackett/Jackett/commit/4ea6018934ba5f267153348bdf9b25aedacb84c2) yggtorrent: add indexer for all users (#16379)
-* [bc8300e](https://github.com/Jackett/Jackett/commit/bc8300ec5ae99462fc16fb039bab101aadaa88a7) exttorrents: remove indexer. resolves #6285 (#16453)
+* [50b5f46](https://github.com/Jackett/Jackett/commit/50b5f466617295d89243a4da01a74008bb7915fb) c411: support season and ep search
+* [7b4829f](https://github.com/Jackett/Jackett/commit/7b4829fc2b89d0b496e17e22e515d4efaf125d81) torr9: comment as a reminder that season and ep search are not currently working but intended to be,
+* [6d23752](https://github.com/Jackett/Jackett/commit/6d2375294d845daa8dbb00d7a825d2e5e78568a1) c411:  add season and ep search
+* [22de41e](https://github.com/Jackett/Jackett/commit/22de41e5eaa932da5deda7105de48cc42a8044fc) torrentqq: bump domain
+* [7b344f6](https://github.com/Jackett/Jackett/commit/7b344f6ee880c735412c9f98a7b8fd18a0a0192b) arabscene: lint fix
+* [aa15511](https://github.com/Jackett/Jackett/commit/aa1551139e52121570459b81c17bc4c907c3fba4) arabscene: add Arabic private tracker. resolves #6753 (#16489)
+* [5c74cd8](https://github.com/Jackett/Jackett/commit/5c74cd89ba7a789506c1518cd5cb4f364c43167d) c411: add cat search
+* [f030abf](https://github.com/Jackett/Jackett/commit/f030abfe31b72a6e48e6e5bcb4dc1136d200216a) add torr9 a French private site. resolves #16484
+* [0fb6238](https://github.com/Jackett/Jackett/commit/0fb6238919600262d444d19484407067aff39fba) linuxtracker: new cat
+* [a203b50](https://github.com/Jackett/Jackett/commit/a203b507b70ac914f2e1216c79994374e182d938) c411: consolidate cats to avoid duplicate ids
 <details><summary><b>See More</b></summary>
-* [7a3eb6d](https://github.com/Jackett/Jackett/commit/7a3eb6d65b7c9b905294689472228318cdcbdb0d) mactorrentsdownload: update download selector & filter (#16450)
-* [16e2784](https://github.com/Jackett/Jackett/commit/16e2784acf4e653d48c96f1d423638cb75adec20) tocashare: new cats
-* [8377852](https://github.com/Jackett/Jackett/commit/8377852b5a1183bac6eb8c8b21e9ca66d0d5553f) tmghub: update layout & add new cat. resolves #16420
+* [4279176](https://github.com/Jackett/Jackett/commit/4279176347a167d272c2f85eee1a7fd331e7a927) c411: cats from c411 CAPS not compliant with specs. fixed.
+* [72fb8cf](https://github.com/Jackett/Jackett/commit/72fb8cfc881a5a2d978907de2525cdd2ac199e26) c411: add imdbid search for movie, update cats
 
-This list of changes was [auto generated](https://dev.azure.com/Jackett/Jackett/_build/results?buildId=15308&view=logs).</details>
+This list of changes was [auto generated](https://dev.azure.com/Jackett/Jackett/_build/results?buildId=15381&view=logs).</details>
